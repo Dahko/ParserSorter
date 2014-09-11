@@ -62,24 +62,3 @@ public:
 	std::vector<TEquationPtr> m_childs;
 };
 
-bool AllowedAsChar(char c);
-
-typedef std::string::iterator TStrIter;
-class EParseException : public std::logic_error {
-public:
-	EParseException(std::string s) : std::logic_error(s) {}
-};
-
-// given a substring starting _after_ opening bracket
-// returns the position of matching closing bracket
-TStrIter GetClosingBracket(TStrIter itBegin, TStrIter itEnd); 
-
-// Factory function, which creates an equation by its string
-TEquationPtr ReadEquation(TStrIter &itBegin, TStrIter itEnd);
-
-// Parses sum of equations, each item being an IEquation descendant
-std::vector<TEquationPtr> ParseSum(TStrIter itBegin, TStrIter itEnd);
-
-void RemoveSpaces(std::string &s);
-
-TEquationPtr ParseString(std::string str);;

@@ -175,6 +175,14 @@
 				RelativePath=".\Element.h"
 				>
 			</File>
+			<File
+				RelativePath=".\Parsing.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Parsing.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
