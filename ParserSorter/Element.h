@@ -8,12 +8,12 @@ typedef char TElement;
 
 class IEquation {
 public:
-	virtual bool IsLeaf() const;
-	virtual TElement GetMinElement() const; 
+	virtual bool IsLeaf() const = 0;
+	virtual TElement GetMinElement() const = 0; 
 
 	/*virtual unsigned GetChilds();
 	virtual IEquation* Getchild();*/
-	virtual void Print(std::ostream &os);
+	virtual void Print(std::ostream &os) = 0;
 
 	virtual ~IEquation() {};
 };
@@ -53,8 +53,8 @@ public:
 	virtual void Print( std::ostream &os ) {
 		os << "(";
 		for(size_t i=0; i < m_childs.size(); i++) {
+			if(i!=0) os<<"+";
 			m_childs[i]->Print(os);
-			os<<"+";
 		}
 		os << ")";
 	}
@@ -62,12 +62,7 @@ public:
 	std::vector<TEquationPtr> m_childs;
 };
 
-bool AllowedAsChar(char c) {
-	return c!='+'
-		&& c!='('
-		&& c!=')'
-		&& c!=' ';
-}
+bool AllowedAsChar(char c);
 
 typedef std::string::iterator TStrIter;
 class EParseException : public std::logic_error {
@@ -77,71 +72,14 @@ public:
 
 // given a substring starting _after_ opening bracket
 // returns the position of matching closing bracket
-TStrIter GetClosingBracket(TStrIter itBegin, TStrIter itEnd) {
-	for(TStrIter i=itBegin; i != itEnd; i++) {
-		// stop when found closing bracket
-		if(*i == ')') {
-			return i;
-		}
-		// skip subexpressions
-		else if(*i == '(') {
-			i = GetClosingBracket(i+1, itEnd); 
-		}
-	}
-	throw EParseException("No closing bracket");
-} 
+TStrIter GetClosingBracket(TStrIter itBegin, TStrIter itEnd); 
 
 // Factory function, which creates an equation by its string
-TEquationPtr ReadEquation(TStrIter &itBegin, TStrIter itEnd) {
-	if(itBegin == itEnd) throw EParseException("empty equation");
-	// Single char
-	if(AllowedAsChar(*itBegin)) {
-		CEquationLeaf* result = new CEquationLeaf(*itBegin);
-		itBegin++;
-		return TEquationPtr(result);
-	}
-	// Compound expression in ()
-	if(*itBegin == '(') {
-		// Find substring in braces
-		TStrIter itEqEnd = GetClosingBracket(itBegin+1, itEnd);
-		// Get all items in braces
-		std::vector<TEquationPtr> sum = ParseSum(itBegin+1, itEqEnd);
-		if(sum.empty()) throw EParseException("Empty bracket contents");
-		CEquationBranch* result = new CEquationBranch(sum);
-		itBegin = itEqEnd+1;
-		return TEquationPtr(result);
-	}
-	throw EParseException("unexpected character");
-}
+TEquationPtr ReadEquation(TStrIter &itBegin, TStrIter itEnd);
 
 // Parses sum of equations, each item being an IEquation descendant
-std::vector<TEquationPtr> ParseSum(TStrIter itBegin, TStrIter itEnd) {
-	std::vector<TEquationPtr> result;
-	if(itBegin == itEnd) return result;
-	while(itBegin != itEnd) {
-		// Read equation
-		result.push_back(ReadEquation(itBegin, itEnd)); // itBegin changes here
-		// Success if string ended
-		if(itBegin ==itEnd) return result;
-		// Otherwise skip '+'
-		if(*itBegin == '+') itBegin++;
-		else throw EParseException("Expected plus sign, not found");
-	}
-	// Make sure string doesn't end with a plus
-	throw EParseException("Expected equation after plus sign");
-}
+std::vector<TEquationPtr> ParseSum(TStrIter itBegin, TStrIter itEnd);
 
-void RemoveSpaces(std::string &s) {
-	s.erase(std::remove(s.begin(), s.end(),' '), s.end());
-}
+void RemoveSpaces(std::string &s);
 
-TEquationPtr ParseString(std::string str) {
-	RemoveSpaces(str);
-	try {
-		std::vector<TEquationPtr> result = ParseSum(str.begin(), str.end());
-		return new CEquationBranch(result);
-	} catch(EParseException e) {
-		printf("error: %s", e.what());
-		return NULL;
-	}
-};
+TEquationPtr ParseString(std::string str);;
