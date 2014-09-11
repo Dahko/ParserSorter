@@ -8,6 +8,7 @@ void TestParsing() {
 	std::string s("(X + (V+M+A) + C +(M+L + (C + C) + C))");
 	std::cout << "\ninput: " << s;
 	TEquationPtr ptr = ParseString(s);
+	ptr->Sort();
 	std::cout << "\nresult: ";
 	if(!ptr) { std::cout << "parsing failed\n"; return; }
 	ptr->Print(std::cout);

@@ -10,7 +10,7 @@ class IEquation {
 public:
 	virtual bool IsLeaf() const = 0;
 	virtual TElement GetMinElement() const = 0; 
-
+	virtual void Sort() = 0;
 	/*virtual unsigned GetChilds();
 	virtual IEquation* Getchild();*/
 	virtual void Print(std::ostream &os) = 0;
@@ -29,12 +29,28 @@ public:
 	virtual TElement GetMinElement() const {
 		return m_el;
 	}
+	virtual void Sort() { return; } // always sorted
 	virtual void Print( std::ostream &os ) {
 		os << m_el;
 	}
 
 private:
 	TElement m_el;
+};
+
+class SortingPredicate {
+public:
+	bool operator()(TEquationPtr lhs, TEquationPtr rhs) {
+		// Null checks. Maybe need to do something to guarantee this beforehead
+		if(!lhs) return true;
+		if(!rhs) return false;
+
+		TElement lMin = lhs->GetMinElement();
+		TElement rMin = rhs->GetMinElement();
+		if(lMin < rMin) return true;
+		if(lMin == rMin && lhs->IsLeaf() && !rhs->IsLeaf()) return true;
+		return false;
+	}
 };
 
 class CEquationBranch : public IEquation {
@@ -45,9 +61,13 @@ public:
 	}
 
 	virtual TElement GetMinElement() const {
-		std::vector<TEquationPtr>::const_iterator it = std::min_element(m_childs.begin(), m_childs.end());
-		if(it == m_childs.end()) { throw std::logic_error("oops"); }
-		return (*it)->GetMinElement();
+		if(m_childs.empty()) { throw std::logic_error("oops"); };
+		TElement minimum = m_childs[0]->GetMinElement();
+		for(unsigned i=0; i<m_childs.size(); i++) {
+			TElement localMin = m_childs[i]->GetMinElement();
+			if(localMin < minimum) minimum = localMin;
+		}
+		return minimum;
 	}
 
 	virtual void Print( std::ostream &os ) {
@@ -57,6 +77,13 @@ public:
 			m_childs[i]->Print(os);
 		}
 		os << ")";
+	}
+	virtual void Sort() {
+		for(unsigned i=0; i<m_childs.size(); i++) {
+			m_childs[i]->Sort();
+		}
+		std::sort(m_childs.begin(), m_childs.end(), SortingPredicate());
+
 	}
 public:
 	std::vector<TEquationPtr> m_childs;
