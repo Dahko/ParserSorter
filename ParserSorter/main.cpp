@@ -1,13 +1,13 @@
 #include "Element.h"
-#include <iostream>
 #include "Parsing.h"
 
-
+#include <string>
+#include <iostream>
 
 void TestParsing() {
 	std::string s("(X + (V+M+A) + C +(M+L + (C + C) + C))");
 	std::cout << "\ninput: " << s;
-	TEquationPtr ptr = ParseString(s);
+	TEquationPtr ptr = ParseString(s.c_str());
 	ptr->Sort();
 	std::cout << "\nresult: ";
 	if(!ptr) { std::cout << "parsing failed\n"; return; }
@@ -27,9 +27,10 @@ void TestParsingIncorrectData() {
 }
 
 void main() {
-	TestClosingBracket();
 	TestParsing();
-	TestParsingIncorrectData();
+	
+	//TestClosingBracket();
+	//TestParsingIncorrectData();
 
 	system("pause");
 }

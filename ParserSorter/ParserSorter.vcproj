@@ -162,7 +162,15 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\Element.cpp"
+				RelativePath=".\ElementImpl.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\main.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Parsing.cpp"
 				>
 			</File>
 		</Filter>
@@ -176,7 +184,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Parsing.cpp"
+				RelativePath=".\ElementImpl.h"
 				>
 			</File>
 			<File

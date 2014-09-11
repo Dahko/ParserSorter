@@ -1,5 +1,10 @@
 #include "Parsing.h"
+#include "ElementImpl.h"
+
 #include <iostream>
+#include <stdexcept>
+#include <algorithm>
+#include <string>
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -29,7 +34,8 @@ void RemoveSpaces(std::string &s);
 
 //////////////////////////////////////////////////////////////////////////
 
-TEquationPtr ParseString( std::string str ) {
+TEquationPtr ParseString( const char* cstr ) {
+	std::string str(cstr);
 	RemoveSpaces(str);
 	try {
 		TStrIter itBegin = str.begin();
@@ -112,8 +118,7 @@ std::vector<TEquationPtr> ParseSum( TStrIter itBegin, TStrIter itEnd ) {
 void TestClosingBracket() {
 	std::string s("(123+dfsd +(1+(2+1) )+1) + 200 + (1+2)");
 	TStrIter itClosing = GetClosingBracket(s.begin()+1, s.end());
-	printf((itClosing - s.begin()) ? "ok" : "oops");
+	std::cout << ((itClosing - s.begin()) ? "ok" : "oops") << "\n";
 	std::string s2(s.begin(), itClosing+1);
-	printf(("\n"+s2).c_str());
-	printf("\n");
+	std::cout << s2 << "\n";
 }

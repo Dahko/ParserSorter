@@ -9,7 +9,7 @@
 // - all brackets should be paired
 // - two terms should be separated with a +
 // - a + should always separate two terms (no + at the beginning/end of the line)
-TEquationPtr ParseString(std::string str);
+TEquationPtr ParseString(const char* str);
 
 
 // Tests
